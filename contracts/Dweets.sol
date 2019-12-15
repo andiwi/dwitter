@@ -8,6 +8,14 @@ contract Dweets {
         address author;
     }
 
+    event newDweetEvent(
+        uint id
+    );
+
+    event newLikeEvent(
+        uint dweetId
+    );
+
     mapping(uint => Dweet) public dweets;
     uint public dweetsCount;
 
@@ -18,11 +26,15 @@ contract Dweets {
     function postDweet(string memory _message) public {
         dweets[dweetsCount] = Dweet(dweetsCount, _message, 0, msg.sender);
         dweetsCount ++;
+
+        emit newDweetEvent(dweetsCount - 1);
     }
 
     function like(uint _dweetId) public {
         //require a valid dweet id
         require(0 <= _dweetId && _dweetId < dweetsCount, "Dweet with _dweetId does not exist.");
         dweets[_dweetId].likes ++;
+
+        emit newLikeEvent(_dweetId);
     }
 }
