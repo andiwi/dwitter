@@ -4,6 +4,7 @@ contract Dweets {
     struct Dweet {
         uint id;
         string message;
+        uint likes;
         address author;
     }
 
@@ -15,7 +16,13 @@ contract Dweets {
     }
 
     function postDweet(string memory _message) public {
-        dweets[dweetsCount] = Dweet(dweetsCount, _message, msg.sender);
+        dweets[dweetsCount] = Dweet(dweetsCount, _message, 0, msg.sender);
         dweetsCount ++;
+    }
+
+    function like(uint _dweetId) public {
+        //require a valid dweet id
+        require(0 <= _dweetId && _dweetId < dweetsCount, "Dweet with _dweetId does not exist.");
+        dweets[_dweetId].likes ++;
     }
 }
