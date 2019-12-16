@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  AppBar,
+  Container,
+  Theme,
+  Typography,
+  Toolbar,
+  createStyles,
+  makeStyles
+} from "@material-ui/core";
 
-const App: React.FC = () => {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    appbarTitle: {
+      flexGrow: 1
+    }
+  })
+);
+
+export default function App() {
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.appbarTitle}>
+            dwitter - a decentralised message board.
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Container></Container>
+    </React.Fragment>
   );
 }
-
-export default App;
