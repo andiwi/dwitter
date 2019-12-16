@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Container,
@@ -8,6 +8,8 @@ import {
   createStyles,
   makeStyles
 } from "@material-ui/core";
+import DownloadMetamask from "./components/DownloadMetamask";
+import { detectWeb3 } from "./utils/Web3Utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,6 +22,19 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function App() {
   const classes = useStyles();
 
+  const [web3Detected, setWeb3Detected] = useState<boolean>(false);
+
+  //detect if web3 is available or not
+  useEffect(() => {
+    setWeb3Detected(detectWeb3());
+  }, []);
+
+  //render elements
+  let appContent;
+  if (!web3Detected) {
+    appContent = <DownloadMetamask />;
+  }
+
   return (
     <React.Fragment>
       <AppBar position="static">
@@ -29,7 +44,7 @@ export default function App() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container></Container>
+      <Container>{appContent}</Container>
     </React.Fragment>
   );
 }
