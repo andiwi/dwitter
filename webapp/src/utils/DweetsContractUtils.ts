@@ -1,6 +1,7 @@
 import Dweets from "../contracts/Dweets.json";
 import { ethers } from "ethers";
-import { Signer } from "ethers/ethers";
+import { Signer, Contract } from "ethers/ethers";
+import IDweet from "../interfaces/IDweet.js";
 
 export function getDweetsContractAddress(chainId: number) {
   if (chainId === 3) {
@@ -34,4 +35,29 @@ export async function getDweetsContractInstance(signer: Signer) {
   dweetsContract = dweetsContract.connect(signer);
 
   return dweetsContract;
+}
+
+export async function loadDweets(dweetsContract: Contract) {
+  let dweetsCount = await dweetsContract.dweetsCount();
+  dweetsCount = dweetsCount.toNumber();
+
+  let dweets = [];
+  for (let i: number = dweetsCount - 1; i >= 0; i--) {
+    const dweet = await loadDweet(dweetsContract, i);
+    dweets.push(dweet);
+  }
+
+  return dweets;
+}
+
+export async function loadDweet(dweetsContract: Contract, dweetId: number) {
+  const res = await dweetsContract.dweets(dweetId);
+  const dweet: IDweet = {
+    id: res.id.toNumber(),
+    message: res.message,
+    author: res.author,
+    likes: res.likes.toNumber()
+  };
+
+  return dweet;
 }
