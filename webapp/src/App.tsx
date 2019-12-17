@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { ethers, Contract } from "ethers";
+import { Signer } from "ethers/ethers";
 import {
   AppBar,
   Container,
@@ -11,8 +12,8 @@ import {
 } from "@material-ui/core";
 import Login from "./components/Login";
 import DownloadMetamask from "./components/DownloadMetamask";
+import { getDweetsContractInstance } from "./utils/DweetsContractUtils";
 import { detectWeb3, getWeb3Provider } from "./utils/Web3Utils";
-import { JsonRpcProvider } from "ethers/providers";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,22 +28,32 @@ export default function App() {
 
   const [web3Detected, setWeb3Detected] = useState<boolean>(false);
   const [web3Provider, setWeb3Provider] = useState();
-  const [provider, setProvider] = useState<JsonRpcProvider>();
+  const [signer, setSigner] = useState<Signer>();
   const [account, setAccount] = useState<string>();
+  const [dweetsContract, setDweetsContract] = useState<Contract>();
 
   const loadWeb3 = async () => {
     const web3Provider = await getWeb3Provider();
     if (web3Provider === null) {
       console.log("Unable to access web3 provider.");
+      return;
     }
     setWeb3Provider(web3Provider);
 
     //set provider and signer
     const provider = new ethers.providers.Web3Provider(web3Provider);
-    setProvider(provider);
     const signer = provider.getSigner();
+    setSigner(signer);
     const account = await signer.getAddress();
     setAccount(account);
+
+    //instantiate smart contract
+    const dweetsContract = await getDweetsContractInstance(signer);
+    if (dweetsContract === null) {
+      console.log("Unable to instantiate dweets contract.");
+      return;
+    }
+    setDweetsContract(dweetsContract);
   };
 
   const handleConnectMetamask = (event: React.MouseEvent) => {
