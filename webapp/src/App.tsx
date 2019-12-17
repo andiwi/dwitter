@@ -9,8 +9,12 @@ import {
   Typography,
   Toolbar,
   createStyles,
-  makeStyles
+  makeStyles,
+  ThemeProvider,
+  CssBaseline
 } from "@material-ui/core";
+
+import theme from "./theme";
 import Login from "./pages/Login";
 import DownloadMetamask from "./pages/DownloadMetamask";
 import { getDweetsContractInstance } from "./utils/DweetsContractUtils";
@@ -136,7 +140,8 @@ export default function App() {
   }
 
   return (
-    <React.Fragment>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.appbarTitle}>
@@ -146,6 +151,6 @@ export default function App() {
         </Toolbar>
       </AppBar>
       <Container>{appContent}</Container>
-    </React.Fragment>
+    </ThemeProvider>
   );
 }
