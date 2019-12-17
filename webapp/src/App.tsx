@@ -92,6 +92,23 @@ export default function App() {
     };
   }, [web3Provider]);
 
+  //instantiate new smart contract on signer change
+  useEffect(() => {
+    if (signer === undefined || signer.provider === undefined) {
+      return;
+    }
+
+    //instantiate smart contract
+    getDweetsContractInstance(signer).then(contract => {
+      if (contract === null) {
+        setDweetsContract(undefined);
+        return;
+      }
+
+      setDweetsContract(contract);
+    });
+  }, [signer]);
+
   //render elements
   let appBarRightElements;
   let appContent;
