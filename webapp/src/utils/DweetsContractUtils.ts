@@ -61,3 +61,8 @@ export async function loadDweet(dweetsContract: Contract, dweetId: number) {
 
   return dweet;
 }
+
+export async function likeDweet(dweetsContract: Contract, dweetId: number) {
+  const tx = await dweetsContract.like(dweetId);
+  await tx.wait();
+}

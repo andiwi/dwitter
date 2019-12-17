@@ -6,10 +6,12 @@ import {
   Theme,
   createStyles,
   Card,
-  CardHeader
+  CardHeader,
+  CardActions
 } from "@material-ui/core";
 import IDweet from "../interfaces/IDweet";
-import { loadDweets } from "../utils/DweetsContractUtils";
+import { loadDweets, likeDweet } from "../utils/DweetsContractUtils";
+import LikeChip from "./LikeChip";
 
 interface DweetCardsListProps {
   dweetsContract: Contract;
@@ -42,6 +44,14 @@ export default function DweetCardsList(props: DweetCardsListProps) {
     load();
   }, [props.dweetsContract]);
 
+  const handleLikeClick = async (dweetId: number) => {
+    if (dweets === undefined) {
+      return;
+    }
+
+    await likeDweet(props.dweetsContract, dweetId);
+  };
+
   if (dweets === undefined) {
     return <div>loading dweets...</div>;
   }
@@ -58,6 +68,13 @@ export default function DweetCardsList(props: DweetCardsListProps) {
       <Card key={key} className={classes.card}>
         <CardHeader title={title} />
         <CardContent>{item.message}</CardContent>
+        <CardActions disableSpacing>
+          <LikeChip
+            dweetId={item.id}
+            dweetLikes={item.likes}
+            onClick={handleLikeClick}
+          />
+        </CardActions>
       </Card>
     );
   });
