@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
 import {
   AppBar,
   Container,
@@ -10,7 +11,8 @@ import {
 } from "@material-ui/core";
 import Login from "./components/Login";
 import DownloadMetamask from "./components/DownloadMetamask";
-import { detectWeb3 } from "./utils/Web3Utils";
+import { detectWeb3, getWeb3Provider } from "./utils/Web3Utils";
+import { JsonRpcProvider } from "ethers/providers";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,11 +26,28 @@ export default function App() {
   const classes = useStyles();
 
   const [web3Detected, setWeb3Detected] = useState<boolean>(false);
+  const [web3Provider, setWeb3Provider] = useState();
+  const [provider, setProvider] = useState<JsonRpcProvider>();
   const [account, setAccount] = useState<string>();
+
+  const loadWeb3 = async () => {
+    const web3Provider = await getWeb3Provider();
+    if (web3Provider === null) {
+      console.log("Unable to access web3 provider.");
+    }
+    setWeb3Provider(web3Provider);
+
+    //set provider and signer
+    const provider = new ethers.providers.Web3Provider(web3Provider);
+    setProvider(provider);
+    const signer = provider.getSigner();
+    const account = await signer.getAddress();
+    setAccount(account);
+  };
 
   const handleConnectMetamask = (event: React.MouseEvent) => {
     event.preventDefault();
-    //TODO loadWeb3();
+    loadWeb3();
   };
 
   //detect if web3 is available or not
@@ -45,6 +64,9 @@ export default function App() {
     if (account === undefined) {
       //show login info
       appContent = <Login onClick={handleConnectMetamask} />;
+    } else {
+      //metamask connected
+      appContent = <Typography>Your address: {account}</Typography>;
     }
   }
 
