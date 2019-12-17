@@ -7,6 +7,7 @@ import {
   TextField,
   CardActions,
   Button,
+  LinearProgress,
   makeStyles
 } from "@material-ui/core";
 import { Contract } from "ethers/ethers";
@@ -31,14 +32,17 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function DweetPostCard(props: DweetPostCardProps) {
   const classes = useStyles();
   const [message, setMessage] = useState<string>();
+  const [loading, setLoading] = useState<boolean>();
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (message !== undefined && message !== "") {
       //post dweet
+      setLoading(true);
       const tx = await props.dweetsContract.postDweet(message);
       await tx.wait();
+      setLoading(false);
 
       //reset message
       setMessage("");
@@ -67,6 +71,7 @@ export default function DweetPostCard(props: DweetPostCardProps) {
             Dweet
           </Button>
         </CardActions>
+        {loading && <LinearProgress />}
       </form>
     </Card>
   );
