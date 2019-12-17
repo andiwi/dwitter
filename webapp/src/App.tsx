@@ -3,6 +3,7 @@ import { ethers, Contract } from "ethers";
 import { Signer } from "ethers/ethers";
 import {
   AppBar,
+  Grid,
   Container,
   Theme,
   Typography,
@@ -12,6 +13,7 @@ import {
 } from "@material-ui/core";
 import Login from "./components/Login";
 import DownloadMetamask from "./components/DownloadMetamask";
+import DweetCardsList from "./components/DweetCardsList";
 import { getDweetsContractInstance } from "./utils/DweetsContractUtils";
 import { detectWeb3, getWeb3Provider } from "./utils/Web3Utils";
 
@@ -75,9 +77,32 @@ export default function App() {
     if (account === undefined) {
       //show login info
       appContent = <Login onClick={handleConnectMetamask} />;
+    } else if (dweetsContract === undefined) {
+      //metamask connected but wrong network
+      appContent = (
+        <Grid container justify="center" spacing={2}>
+          <Grid item xs={12} md={8}>
+            <Typography variant="h1" paragraph={true}>
+              How to use dwitter
+            </Typography>
+            <Typography variant="h2">Ethereum Network: Ropsten</Typography>
+            <Typography variant="body1" paragraph={true}>
+              Dwitter is currently only available on ropsten testnet. Please
+              make sure that your wallet is connected to the ropsten testnet and
+              not to the mainnet.
+            </Typography>
+          </Grid>
+        </Grid>
+      );
     } else {
       //metamask connected
-      appContent = <Typography>Your address: {account}</Typography>;
+      appContent = (
+        <Grid container justify="center" spacing={2}>
+          <Grid item xs={12} md={8}>
+            <DweetCardsList dweetsContract={dweetsContract} />
+          </Grid>
+        </Grid>
+      );
     }
   }
 
