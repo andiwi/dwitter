@@ -3,6 +3,7 @@ import { ethers, Contract } from "ethers";
 import { Signer } from "ethers/ethers";
 import {
   AppBar,
+  Button,
   Grid,
   Container,
   Theme,
@@ -70,7 +71,9 @@ export default function App() {
   }, []);
 
   //render elements
+  let appBarRightElements;
   let appContent;
+
   if (!web3Detected) {
     appContent = <DownloadMetamask />;
   } else {
@@ -78,6 +81,12 @@ export default function App() {
     if (account === undefined) {
       //show login info
       appContent = <Login onClick={handleConnectMetamask} />;
+
+      appBarRightElements = (
+        <Button color="inherit" onClick={handleConnectMetamask}>
+          Connect Wallet
+        </Button>
+      );
     } else if (dweetsContract === undefined) {
       //metamask connected but wrong network
       appContent = (
@@ -105,6 +114,8 @@ export default function App() {
           </Grid>
         </Grid>
       );
+
+      appBarRightElements = <Typography>Your address: {account}</Typography>;
     }
   }
 
@@ -115,6 +126,7 @@ export default function App() {
           <Typography variant="h6" className={classes.appbarTitle}>
             dwitter - a decentralised message board.
           </Typography>
+          {appBarRightElements}
         </Toolbar>
       </AppBar>
       <Container>{appContent}</Container>
