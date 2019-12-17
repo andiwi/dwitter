@@ -4,7 +4,6 @@ import { Signer } from "ethers/ethers";
 import {
   AppBar,
   Button,
-  Grid,
   Container,
   Theme,
   Typography,
@@ -12,12 +11,12 @@ import {
   createStyles,
   makeStyles
 } from "@material-ui/core";
-import Login from "./components/Login";
-import DownloadMetamask from "./components/DownloadMetamask";
-import DweetPostCard from "./components/DweetPostCard";
-import DweetCardsList from "./components/DweetCardsList";
+import Login from "./pages/Login";
+import DownloadMetamask from "./pages/DownloadMetamask";
 import { getDweetsContractInstance } from "./utils/DweetsContractUtils";
 import { detectWeb3, getWeb3Provider } from "./utils/Web3Utils";
+import WrongNetwork from "./pages/WrongNetwork";
+import DweetsFeed from "./pages/DweetsFeed";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -128,32 +127,10 @@ export default function App() {
       );
     } else if (dweetsContract === undefined) {
       //metamask connected but wrong network
-      appContent = (
-        <Grid container justify="center" spacing={2}>
-          <Grid item xs={12} md={8}>
-            <Typography variant="h1" paragraph={true}>
-              How to use dwitter
-            </Typography>
-            <Typography variant="h2">Ethereum Network: Ropsten</Typography>
-            <Typography variant="body1" paragraph={true}>
-              Dwitter is currently only available on ropsten testnet. Please
-              make sure that your wallet is connected to the ropsten testnet and
-              not to the mainnet.
-            </Typography>
-          </Grid>
-        </Grid>
-      );
+      appContent = <WrongNetwork />;
     } else {
       //metamask connected
-      appContent = (
-        <Grid container justify="center" spacing={2}>
-          <Grid item xs={12} md={8}>
-            <DweetPostCard dweetsContract={dweetsContract} />
-            <DweetCardsList dweetsContract={dweetsContract} />
-          </Grid>
-        </Grid>
-      );
-
+      appContent = <DweetsFeed dweetsContract={dweetsContract} />;
       appBarRightElements = <Typography>Your address: {account}</Typography>;
     }
   }
