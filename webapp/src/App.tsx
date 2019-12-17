@@ -70,6 +70,28 @@ export default function App() {
     setWeb3Detected(detectWeb3());
   }, []);
 
+  //listen for address and network changes
+  useEffect(() => {
+    if (web3Provider === undefined) {
+      return;
+    }
+
+    web3Provider.on("networkChanged", (networkId: string) => {
+      const provider = new ethers.providers.Web3Provider(web3Provider);
+      const signer = provider.getSigner();
+      setSigner(signer);
+    });
+
+    web3Provider.on("accountsChanged", (accounts: Array<string>) => {
+      setAccount(accounts[0]);
+    });
+
+    return () => {
+      web3Provider.removeListener("networkChanged");
+      web3Provider.removeListener("accountsChanged");
+    };
+  }, [web3Provider]);
+
   //render elements
   let appBarRightElements;
   let appContent;
