@@ -10,7 +10,7 @@ import {
   CardActions
 } from "@material-ui/core";
 import IDweet from "../interfaces/IDweet";
-import { loadDweets, likeDweet } from "../utils/DweetsContractUtils";
+import { loadDweets, likeDweet, loadDweet } from "../utils/DweetsContractUtils";
 import LikeChip from "./LikeChip";
 
 interface DweetCardsListProps {
@@ -42,6 +42,40 @@ export default function DweetCardsList(props: DweetCardsListProps) {
       setDweets(dweets);
     }
     load();
+  }, [props.dweetsContract]);
+
+  //register blockchain event listeners
+  useEffect(() => {
+    if (props.dweetsContract === undefined) {
+      return;
+    }
+
+    let ignore = false; //handle out-of-order responses
+
+    props.dweetsContract.on("newDweetEvent", async () => {
+      const dweets = await loadDweets(props.dweetsContract);
+      if (!ignore) setDweets(dweets);
+    });
+
+    props.dweetsContract.on("newLikeEvent", async dweetId => {
+      const newDweet = await loadDweet(props.dweetsContract, dweetId);
+
+      //update dweets
+      if (!ignore)
+        setDweets(dweets => {
+          const idx = dweets.findIndex(dweet => dweet.id === newDweet.id);
+          const newDweets = [...dweets]; //copy dweets
+          newDweets[idx] = newDweet; //update the liked dweet
+          return newDweets;
+        });
+    });
+
+    //remove event listeners on cleanup
+    return function cleanup() {
+      props.dweetsContract.removeAllListeners("newDweetEvent");
+      props.dweetsContract.removeAllListeners("newLikeEvent");
+      ignore = true;
+    };
   }, [props.dweetsContract]);
 
   const handleLikeClick = async (dweetId: number) => {
