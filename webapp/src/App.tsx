@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import Login from "./components/Login";
 import DownloadMetamask from "./components/DownloadMetamask";
+import DweetPostCard from "./components/DweetPostCard";
 import DweetCardsList from "./components/DweetCardsList";
 import { getDweetsContractInstance } from "./utils/DweetsContractUtils";
 import { detectWeb3, getWeb3Provider } from "./utils/Web3Utils";
@@ -99,6 +100,7 @@ export default function App() {
       appContent = (
         <Grid container justify="center" spacing={2}>
           <Grid item xs={12} md={8}>
+            <DweetPostCard dweetsContract={dweetsContract} />
             <DweetCardsList dweetsContract={dweetsContract} />
           </Grid>
         </Grid>
