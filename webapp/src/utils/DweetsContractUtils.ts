@@ -1,6 +1,7 @@
 import Dweets from "../contracts/Dweets.json";
 import { ethers } from "ethers";
-import { Signer, Contract } from "ethers/ethers";
+import { Contract, Signer } from "ethers/ethers";
+import { Provider } from "ethers/providers";
 import IDweet from "../interfaces/IDweet.js";
 
 export function getDweetsContractAddress(chainId: number) {
@@ -17,22 +18,23 @@ export function getDweetsContractAddress(chainId: number) {
   return null;
 }
 
-export async function getDweetsContractInstance(signer: Signer) {
-  if (signer.provider === undefined) {
-    console.log("Signer is not connected to a network (missing provider");
-    return null;
-  }
+export async function getDweetsContractInstance(
+  provider: Provider,
+  signer?: Signer
+) {
   //instantiate smart contract
   const abi = Dweets.abi;
-  const network = await signer.provider.getNetwork();
+  const network = await provider.getNetwork();
   const dweetsAddress = getDweetsContractAddress(network.chainId);
   if (dweetsAddress === null) {
     console.log("Unsupported network");
     return null;
   }
 
-  let dweetsContract = new ethers.Contract(dweetsAddress, abi, signer);
-  dweetsContract = dweetsContract.connect(signer);
+  let dweetsContract = new ethers.Contract(dweetsAddress, abi, provider);
+  if (signer !== undefined) {
+    dweetsContract = dweetsContract.connect(signer);
+  }
 
   return dweetsContract;
 }

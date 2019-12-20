@@ -6,14 +6,21 @@ import DweetCardsList from "../components/DweetCardsList";
 
 interface DweetsFeedProps {
   dweetsContract: Contract;
+  openConnectWalletPopup(): void;
 }
 
 export default function DweetsFeed(props: DweetsFeedProps) {
   return (
     <Grid container justify="center" spacing={2}>
       <Grid item xs={12} md={8}>
-        <DweetPostCard dweetsContract={props.dweetsContract} />
-        <DweetCardsList dweetsContract={props.dweetsContract} />
+        <DweetPostCard
+          dweetsContract={props.dweetsContract}
+          openConnectWalletPopup={props.openConnectWalletPopup}
+        />
+        <DweetCardsList
+          dweetsContract={props.dweetsContract}
+          openConnectWalletPopup={props.openConnectWalletPopup}
+        />
       </Grid>
     </Grid>
   );

@@ -15,6 +15,7 @@ import LikeChip from "./LikeChip";
 
 interface DweetCardsListProps {
   dweetsContract: Contract;
+  openConnectWalletPopup(): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -80,6 +81,12 @@ export default function DweetCardsList(props: DweetCardsListProps) {
 
   const handleLikeClick = async (dweetId: number) => {
     if (dweets === undefined) {
+      return;
+    }
+
+    if (props.dweetsContract.signer === null) {
+      //open download or connect wallet popup
+      props.openConnectWalletPopup();
       return;
     }
 

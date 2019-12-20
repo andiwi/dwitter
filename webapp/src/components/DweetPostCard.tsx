@@ -14,6 +14,7 @@ import { Contract } from "ethers/ethers";
 
 interface DweetPostCardProps {
   dweetsContract: Contract;
+  openConnectWalletPopup(): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,16 +38,25 @@ export default function DweetPostCard(props: DweetPostCardProps) {
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    if (message !== undefined && message !== "") {
-      //post dweet
-      setLoading(true);
-      const tx = await props.dweetsContract.postDweet(message);
-      await tx.wait();
-      setLoading(false);
-
-      //reset message
-      setMessage("");
+    if (message === undefined || message === "") {
+      console.log("please provide a message");
+      return;
     }
+
+    if (props.dweetsContract.signer === null) {
+      //open download or connect wallet popup
+      props.openConnectWalletPopup();
+      return;
+    }
+
+    //post dweet
+    setLoading(true);
+    const tx = await props.dweetsContract.postDweet(message);
+    await tx.wait();
+    setLoading(false);
+
+    //reset message
+    setMessage("");
   };
 
   return (
