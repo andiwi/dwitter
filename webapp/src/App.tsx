@@ -85,6 +85,10 @@ export default function App() {
 
     web3Provider.on("accountsChanged", (accounts: Array<string>) => {
       setAccount(accounts[0]);
+      const provider = new ethers.providers.Web3Provider(web3Provider);
+      const signer = provider.getSigner();
+      setProvider(provider);
+      setSigner(signer);
     });
 
     return () => {
